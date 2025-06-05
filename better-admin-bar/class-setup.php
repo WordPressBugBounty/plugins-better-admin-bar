@@ -53,7 +53,7 @@ class Setup {
 	public function __construct() {}
 
 	/**
-	 * Check if we're on the Kirki settings page.
+	 * Check if we're on the BAB settings page.
 	 *
 	 * @return bool
 	 */

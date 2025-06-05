@@ -177,7 +177,7 @@ $GLOBALS['swift_control_widget_settings']  = $saved_widget_settings;
 				</li>
 			</ul>
 
-			<p class="credit"><?php _e( 'Made with ❤ in Aschaffenburg, Germany', 'better-admin-bar' ); ?></p>
+			<p class="credit"><?php _e( 'Made with ❤ in Torsby, Sweden', 'better-admin-bar' ); ?></p>
 
 		</div>
 

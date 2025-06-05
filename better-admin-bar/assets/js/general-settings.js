@@ -68,11 +68,11 @@
 	}
 
 	loading.start = function () {
-		elms.saveButton.disabled = true;
+		elms.saveButton.classList.add("is-loading");
 	};
 
 	loading.stop = function () {
-		elms.saveButton.disabled = false;
+		elms.saveButton.classList.remove("is-loading");
 	};
 
 	/**
