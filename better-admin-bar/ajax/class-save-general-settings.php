@@ -151,6 +151,6 @@ class Save_General_Settings {
 		update_option( 'swift_control_misc_settings', $misc_settings );
 		update_option( 'swift_control_admin_bar_settings', $admin_bar_settings );
 
-		wp_send_json_success( __( 'The settings are saved' ), 'better-admin-bar' );
+		wp_send_json_success( __( 'The settings are saved', 'better-admin-bar' ) );
 	}
 }

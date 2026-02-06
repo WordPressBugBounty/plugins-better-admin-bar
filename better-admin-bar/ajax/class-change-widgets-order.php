@@ -69,6 +69,6 @@ class Change_Widgets_Order {
 	 */
 	public function save() {
 		update_option( 'swift_control_active_widgets', $this->data['active_widgets'] );
-		wp_send_json_success( __( 'Widget order is changed' ), 'better-admin-bar' );
+		wp_send_json_success( __( 'Widget order is changed', 'better-admin-bar' ) );
 	}
 }

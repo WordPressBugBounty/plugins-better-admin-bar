@@ -78,6 +78,6 @@ class Save_Position {
 	 */
 	public function save() {
 		update_user_meta( get_current_user_id(), 'swift_control_position', $this->data );
-		wp_send_json_success( __( 'Widget position is saved' ), 'better-admin-bar' );
+		wp_send_json_success( __( 'Widget position is saved', 'better-admin-bar' ) );
 	}
 }

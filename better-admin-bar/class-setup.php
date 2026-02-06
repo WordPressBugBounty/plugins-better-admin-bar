@@ -72,7 +72,6 @@ class Setup {
 			return;
 		}
 
-		add_action( 'init', array( $this, 'setup_text_domain' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'admin_scripts' ), 999 );
 		add_action( 'admin_menu', array( $this, 'add_submenu_page' ) );
 		add_filter( 'admin_body_class', array( $this, 'admin_body_class' ), 20 );
@@ -98,13 +97,6 @@ class Setup {
 		add_action( 'admin_enqueue_scripts', array( $this, 'discount_notice_script' ) );
 		add_action( 'wp_ajax_sc_discount_notice_dismissal', array( $this, 'dismiss_discount_notice' ) );
 
-	}
-
-	/**
-	 * Setup textdomain.
-	 */
-	public function setup_text_domain() {
-		load_plugin_textdomain( 'better-admin-bar', false, plugin_basename( dirname( __FILE__ ) ) . '/languages' );
 	}
 
 	/**
@@ -502,6 +494,7 @@ class Setup {
 		 * This won't conflict with the other options implementation.
 		 */
 		if ( $admin_bar_settings['fix_menu_item_overflow'] ) {
+			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 			echo file_get_contents( __DIR__ . '/assets/css/fix-items-overflow.css' );
 		}
 
@@ -815,7 +808,10 @@ class Setup {
 			hidingIntent: <?php echo esc_attr( $admin_bar_settings['hiding_intent'] ? $admin_bar_settings['hiding_intent'] : 1250 ); ?>,
 			transitionDelay: <?php echo esc_attr( $admin_bar_settings['hiding_transition_delay'] ? $admin_bar_settings['hiding_transition_delay'] : 1500 ); ?>
 		};
-		<?php echo file_get_contents( __DIR__ . '/assets/js/admin-bar.js' ); ?>
+		<?php
+		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+		echo file_get_contents( __DIR__ . '/assets/js/admin-bar.js' );
+		?>
 		</script>
 
 		<?php

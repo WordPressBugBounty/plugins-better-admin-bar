@@ -3,7 +3,7 @@ Contributors: davidvongries, kubiq
 Tags: Adminbar, Margin, Quick Edit, Admin Bar, Replace Admin Bar, Frontend Access, Swift Control, 32px
 Requires at least: 3.0.1
 Tested up to: 6.8
-Stable tag: 4.1.2
+Stable tag: 4.1.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -55,6 +55,10 @@ If you like Better Admin Bar, you will love our other, free WordPress products:
 3. Admin Bar Settings Page
 
 == Changelog ==
+= 4.1.4 =
+* Fixed: HTML entity escaping in inline JavaScript and CSS that broke the Auto Hide Admin Bar feature
+= 4.1.3 =
+* Fixed: Various code improvements and escaping issues for better security and coding standards compliance
 = 4.1.2 =
 * Tested up to WordPress 6.8
 = 4.1.1 =

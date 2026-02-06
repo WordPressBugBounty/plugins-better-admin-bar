@@ -10,10 +10,10 @@ defined( 'ABSPATH' ) || die( "Can't access directly" );
 
 <div class="sidebar-heatbox available-widgets-box">
 	<h2>
-		<?php _e( 'Widgets', 'better-admin-bar' ); ?>
+		<?php esc_html_e( 'Widgets', 'better-admin-bar' ); ?>
 		<span class="heatbox-tooltip">
 			<span class="dashicons dashicons-editor-help"></span>
-			<span class="tooltip-content"><?php _e( 'Drag & drop widgets over into the Quick Access Panel to make them available.', 'better-admin-bar' ); ?></span>
+			<span class="tooltip-content"><?php esc_html_e( 'Drag & drop widgets over into the Quick Access Panel to make them available.', 'better-admin-bar' ); ?></span>
 		</span>
 	</h2>
 

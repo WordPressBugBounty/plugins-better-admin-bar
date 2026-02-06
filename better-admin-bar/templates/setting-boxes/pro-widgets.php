@@ -10,11 +10,11 @@ defined( 'ABSPATH' ) || die( "Can't access directly" );
 
 <div class="heatbox sidebar-heatbox pro-widgets-box">
 
-	<h2><?php _e( 'Better Admin Bar PRO', 'better-admin-bar' ); ?></h2>
+	<h2><?php esc_html_e( 'Better Admin Bar PRO', 'better-admin-bar' ); ?></h2>
 
 	<div class="heatbox-content">
 
-		<p><?php _e( 'Get <strong>Better Admin Bar PRO</strong> & provide your customers with the user experience they deserve.', 'better-admin-bar' ); ?></p>
+		<p><?php echo wp_kses_post( __( 'Get <strong>Better Admin Bar PRO</strong> & provide your customers with the user experience they deserve.', 'better-admin-bar' ) ); ?></p>
 
 		<ul id="pro-items" class="widget-items pro-items">
 

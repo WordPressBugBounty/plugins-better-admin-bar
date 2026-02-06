@@ -15,17 +15,17 @@ $roles     = $roles_obj->role_names;
 
 <div class="heatbox admin-bar-settings-box">
 	<h2>
-		<?php _e( 'Remove Admin Bar', 'better-admin-bar' ); ?>
+		<?php esc_html_e( 'Remove Admin Bar', 'better-admin-bar' ); ?>
 	</h2>
 	<div class="setting-fields">
 
 		<div class="field">
 			<label for="remove_by_roles" class="label select2-label">
 				<p>
-					<?php _e( 'Remove Admin Bar from your website for:', 'better-admin-bar' ); ?>
+					<?php esc_html_e( 'Remove Admin Bar from your website for:', 'better-admin-bar' ); ?>
 				</p>
 				<select name="remove_by_roles[]" id="remove_by_roles" class="general-setting-field multiselect remove-admin-bar use-select2 is-fullwidth" multiple>
-					<option value="all" <?php echo esc_attr( in_array( 'all', $admin_bar_settings['remove_by_roles'], true ) ? 'selected' : '' ); ?>><?php _e( 'All', 'better-admin-bar' ); ?></option>
+					<option value="all" <?php echo esc_attr( in_array( 'all', $admin_bar_settings['remove_by_roles'], true ) ? 'selected' : '' ); ?>><?php esc_html_e( 'All', 'better-admin-bar' ); ?></option>
 
 					<?php foreach ( $roles as $role_key => $role_name ) : ?>
 						<?php
@@ -45,13 +45,13 @@ $roles     = $roles_obj->role_names;
 
 <div class="heatbox admin-bar-settings-box" data-hide-if-field="remove_by_roles" data-hide-if-value='["all"]'>
 	<h2>
-		<?php _e( 'Auto Hide Admin Bar', 'better-admin-bar' ); ?>
+		<?php esc_html_e( 'Auto Hide Admin Bar', 'better-admin-bar' ); ?>
 	</h2>
 	<div class="setting-fields">
 		<div class="field">
 			<label for="auto_hide" class="label checkbox-label">
-				<?php _e( 'Auto Hide Admin Bar', 'better-admin-bar' ); ?>
-				<p class="description"><?php _e( 'This feature will auto-hide the Admin Bar from your website.<br> It will reappear when hovering over the top part of the browser window.', 'better-admin-bar' ); ?></p>
+				<?php esc_html_e( 'Auto Hide Admin Bar', 'better-admin-bar' ); ?>
+				<p class="description"><?php echo wp_kses_post( __( 'This feature will auto-hide the Admin Bar from your website.<br> It will reappear when hovering over the top part of the browser window.', 'better-admin-bar' ) ); ?></p>
 				<input type="checkbox" name="auto_hide" id="auto_hide" value="1" class="general-setting-field" <?php checked( $admin_bar_settings['auto_hide'], 1 ); ?>>
 				<div class="indicator"></div>
 			</label>
@@ -62,7 +62,7 @@ $roles     = $roles_obj->role_names;
 		<div class="field is-horizontal" data-show-if-field-checked="auto_hide">
 			<div class="field-label">
 				<label for="hiding_transition_delay" class="label">
-					<?php _e( 'Delay:', 'better-admin-bar' ); ?>
+					<?php esc_html_e( 'Delay:', 'better-admin-bar' ); ?>
 				</label>
 			</div>
 			<div class="field-body">
@@ -77,7 +77,7 @@ $roles     = $roles_obj->role_names;
 		<div class="field is-horizontal" data-show-if-field-checked="auto_hide">
 			<div class="field-label">
 				<label for="transition_duration" class="label">
-					<?php _e( 'Animation speed:', 'better-admin-bar' ); ?>
+					<?php esc_html_e( 'Animation speed:', 'better-admin-bar' ); ?>
 				</label>
 			</div>
 			<div class="field-body">
@@ -94,13 +94,13 @@ $roles     = $roles_obj->role_names;
 
 <div class="heatbox admin-bar-settings-box" data-hide-if-field="remove_by_roles" data-hide-if-value='["all"]'>
 	<h2>
-		<?php _e( 'Display Settings', 'better-admin-bar' ); ?>
+		<?php esc_html_e( 'Display Settings', 'better-admin-bar' ); ?>
 	</h2>
 	<div class="setting-fields">
 		<div class="field">
 			<label for="remove_top_gap" class="label checkbox-label">
-				<?php _e( 'Remove Admin Bar Gap', 'better-admin-bar' ); ?>
-				<p class="description"><?php _e( 'Removes the top gap (32px) the Admin Bar adds to your website.', 'better-admin-bar' ); ?></p>
+				<?php esc_html_e( 'Remove Admin Bar Gap', 'better-admin-bar' ); ?>
+				<p class="description"><?php esc_html_e( 'Removes the top gap (32px) the Admin Bar adds to your website.', 'better-admin-bar' ); ?></p>
 				<input type="checkbox" name="remove_top_gap" id="remove_top_gap" value="1" class="general-setting-field" <?php checked( $admin_bar_settings['remove_top_gap'], 1 ); ?>>
 				<div class="indicator"></div>
 			</label>
@@ -108,8 +108,8 @@ $roles     = $roles_obj->role_names;
 
 		<div class="field">
 			<label for="fix_menu_item_overflow" class="label checkbox-label">
-				<?php _e( 'Fix Menu Item Overflow', 'better-admin-bar' ); ?>
-				<p class="description"><?php _e( 'With too many menu items in the admin bar the layout may break on smaller screens.<br> This setting prevents menu items from overflowing and breaking into the next line.', 'better-admin-bar' ); ?></p>
+				<?php esc_html_e( 'Fix Menu Item Overflow', 'better-admin-bar' ); ?>
+				<p class="description"><?php echo wp_kses_post( __( 'With too many menu items in the admin bar the layout may break on smaller screens.<br> This setting prevents menu items from overflowing and breaking into the next line.', 'better-admin-bar' ) ); ?></p>
 				<input type="checkbox" name="fix_menu_item_overflow" id="fix_menu_item_overflow" value="1" class="general-setting-field" <?php checked( $admin_bar_settings['fix_menu_item_overflow'], 1 ); ?>>
 				<div class="indicator"></div>
 			</label>
@@ -120,7 +120,7 @@ $roles     = $roles_obj->role_names;
 		<div class="field is-horizontal">
 			<div class="field-label">
 				<label for="hide_below_screen_width" class="label">
-					<?php _e( 'Hide Admin Bar on screens smaller than:', 'better-admin-bar' ); ?>
+					<?php esc_html_e( 'Hide Admin Bar on screens smaller than:', 'better-admin-bar' ); ?>
 				</label>
 			</div>
 			<div class="field-body">
@@ -136,7 +136,7 @@ $roles     = $roles_obj->role_names;
 		<div class="field is-horizontal">
 			<div class="field-label">
 				<label for="inactive_opacity" class="label">
-					<?php _e( 'Admin Bar opacity:', 'better-admin-bar' ); ?>
+					<?php esc_html_e( 'Admin Bar opacity:', 'better-admin-bar' ); ?>
 				</label>
 			</div>
 			<div class="field-body">
@@ -152,7 +152,7 @@ $roles     = $roles_obj->role_names;
 		<div class="field is-horizontal">
 			<div class="field-label">
 				<label for="active_opacity" class="label">
-					<?php _e( 'Admin Bar opacity (on hover):', 'better-admin-bar' ); ?>
+					<?php esc_html_e( 'Admin Bar opacity (on hover):', 'better-admin-bar' ); ?>
 				</label>
 			</div>
 			<div class="field-body">

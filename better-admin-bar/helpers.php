@@ -51,14 +51,14 @@ function swift_control_settings_output_widget_item( $widget_key ) {
 
 				<?php if ( isset( $default_widget_settings['redirect_url'] ) || isset( $widget_settings['redirect_url'] ) ) : ?>
 					<div class="widget-item-control edit-mode-control redirect-url-setting">
-						<input type="url" id="swift_control_<?php echo esc_attr( $widget_key ); ?>_redirect_url" name="swift_control_<?php echo esc_attr( $widget_key ); ?>_redirect_url" class="text-field redirect-url-field" value="<?php echo esc_html( $redirect_url ); ?>" placeholder="<?php _e( 'Redirect Url', 'better-admin-bar' ); ?>">
+						<input type="url" id="swift_control_<?php echo esc_attr( $widget_key ); ?>_redirect_url" name="swift_control_<?php echo esc_attr( $widget_key ); ?>_redirect_url" class="text-field redirect-url-field" value="<?php echo esc_html( $redirect_url ); ?>" placeholder="<?php esc_attr_e( 'Redirect Url', 'better-admin-bar' ); ?>">
 					</div>
 				<?php endif; ?>
 
 				<?php if ( isset( $default_widget_settings['new_tab'] ) || isset( $widget_settings['new_tab'] ) ) : ?>
 					<div class="widget-item-control edit-mode-control new-tab-setting">
 						<label for="swift_control_<?php echo esc_attr( $widget_key ); ?>_new_tab" class="label checkbox-label blur-trigger">
-							<?php _e( 'New tab', 'better-admin-bar' ); ?>
+							<?php esc_html_e( 'New tab', 'better-admin-bar' ); ?>
 							<input type="checkbox" name="swift_control_<?php echo esc_attr( $widget_key ); ?>_new_tab" id="swift_control_<?php echo esc_attr( $widget_key ); ?>_new_tab" value="1" class="new-tab-field" <?php checked( $tab_target, 1 ); ?>>
 							<div class="indicator"></div>
 						</label>
@@ -68,7 +68,7 @@ function swift_control_settings_output_widget_item( $widget_key ) {
 			</div>
 			<div class="widget-item-col actions-wrapper">
 				<button type="button" class="widget-item-control edit-button">
-					<?php _e( 'Edit', 'better-admin-bar' ); ?>
+					<?php esc_html_e( 'Edit', 'better-admin-bar' ); ?>
 				</button>
 			</div>
 		</div><!-- .cols -->
@@ -409,7 +409,7 @@ function swift_control_generate_random_string( $length = 10 ) {
 	$random_string     = '';
 
 	for ( $i = 0; $i < $length; $i++ ) {
-		$random_string .= $characters[ rand( 0, $characters_length - 1 ) ];
+		$random_string .= $characters[ wp_rand( 0, $characters_length - 1 ) ];
 	}
 
 	return $random_string;
@@ -530,6 +530,7 @@ function swift_control_quick_access_panel( $is_preview = false ) {
 		$widget_name  = swift_control_parse_widget_name( $widget_name, $widget_key );
 		$widget_url   = $parsed_settings['url'];
 		$widget_url   = swift_control_parse_widget_url( $widget_url, $widget_key );
+		$widget_url   = $widget_url ? $widget_url : '#';
 		$tab_target   = $parsed_settings['new_tab'];
 		$redirect_url = $parsed_settings['redirect_url'];
 		$target_attr  = $tab_target ? 'target="_blank"' : '';
@@ -539,7 +540,7 @@ function swift_control_quick_access_panel( $is_preview = false ) {
 		?>
 
 		<li class="swift-control-widget-item <?php echo esc_attr( $widget_class ); ?>" data-widget-key="<?php echo esc_attr( $widget_key ); ?>">
-			<a class="swift-control-widget-link" href="<?php echo esc_url( $widget_url ); ?>" <?php echo $target_attr; ?>>
+			<a class="swift-control-widget-link" href="<?php echo esc_url( $widget_url ); ?>" <?php echo wp_kses_post( $target_attr ); ?>>
 				<i class="<?php echo esc_attr( $icon_class ); ?>"></i>
 			</a>
 			<span class="swift-control-widget-title"><?php echo esc_html( $widget_name ); ?></span>
@@ -569,7 +570,7 @@ function swift_control_quick_access_panel( $is_preview = false ) {
 	<style class="swift-control-transition-style">
 		<?php
 		// We don't hook this extra styles to `class-setup.php` because we need the loop.
-		echo $extra_styles;
+		echo $extra_styles; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		?>
 	</style>
 
@@ -635,7 +636,7 @@ function swift_control_quick_access_panel( $is_preview = false ) {
 			</a>
 		</li>
 
-		<?php echo $widget_list; ?>
+		<?php echo wp_kses_post( $widget_list ); ?>
 
 	</ul>
 

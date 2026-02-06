@@ -5,7 +5,7 @@
  * @package Better_Admin_Bar
  */
 
-defined( 'ABSPATH' ) || die( "Can't access directly" );
+defined( 'WP_UNINSTALL_PLUGIN' ) || die( "Can't access directly" );
 
 $misc_settings       = get_option( 'swift_control_misc_settings', array() );
 $delete_on_uninstall = isset( $misc_settings['delete_on_uninstall'] ) ? absint( $misc_settings['delete_on_uninstall'] ) : 0;

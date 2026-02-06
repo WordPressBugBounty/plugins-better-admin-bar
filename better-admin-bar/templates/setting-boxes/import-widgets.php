@@ -12,10 +12,10 @@ defined( 'ABSPATH' ) || die( "Can't access directly" );
 	<form method="post" action="<?php menu_page_url( 'better-admin-bar', true ); ?>" enctype="multipart/form-data">
 		<input type="hidden" name="swift_control_action" value="import">
 		<?php wp_nonce_field( 'swift_control_import_widgets', 'swift_control_import_nonce' ); ?>
-		<h2><?php _e( 'Import', 'better-admin-bar' ); ?></h2>
+		<h2><?php esc_html_e( 'Import', 'better-admin-bar' ); ?></h2>
 		<div class="heatbox-content">
 			<p>
-				<?php _e( 'Select the JSON file you would like to import.', 'better-admin-bar' ); ?>
+				<?php esc_html_e( 'Select the JSON file you would like to import.', 'better-admin-bar' ); ?>
 			</p>
 			<div class="setting-fields is-gapless">
 				<div class="fields-wrapper">

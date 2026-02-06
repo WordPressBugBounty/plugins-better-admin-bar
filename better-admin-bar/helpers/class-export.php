@@ -35,7 +35,7 @@ class Export {
 			$options_data[ $meta_key ] = get_option( $meta_key, array() );
 		}
 
-		header( 'Content-disposition: attachment; filename=swift-control-export-' . date( 'Y-m-d-H.i.s', strtotime( 'now' ) ) . '.json' );
+		header( 'Content-disposition: attachment; filename=better-admin-bar-export-' . gmdate( 'Y-m-d-H.i.s' ) . '.json' );
 		header( 'Content-type: application/json' );
 
 		echo wp_json_encode( $options_data );
