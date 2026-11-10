@@ -1,27 +1,41 @@
 <?php
 /**
- * Better Admin Bar page template.
+ * Settings page.
  *
  * @package Better_Admin_Bar
  */
 
 defined( 'ABSPATH' ) || die( "Can't access directly" );
 
-// Get the widgets.
-$active_widgets    = swift_control_get_active_widgets();
-$available_widgets = swift_control_get_available_widgets();
-$locked_widgets    = swift_control_get_locked_widgets();
+$swift_control_tabs = array(
+	'settings'  => __( 'Quick Access Panel', 'better-admin-bar' ),
+	'admin-bar' => __( 'Admin Bar', 'better-admin-bar' ),
+	'tools'     => __( 'Tools', 'better-admin-bar' ),
+);
 
-// Get the settings.
-$default_settings = swift_control_get_default_widget_settings();
-$locked_settings  = swift_control_get_locked_widget_settings();
-
-// Get saved settings.
-$saved_widget_settings = swift_control_get_saved_widget_settings();
-
-// Pass saved settings & default settings to $GLOBALS so we can re-use it later.
-$GLOBALS['swift_control_default_settings'] = $default_settings;
-$GLOBALS['swift_control_widget_settings']  = $saved_widget_settings;
+$swift_control_products = array(
+	array(
+		'url'         => 'https://wordpress.org/plugins/ultimate-dashboard/',
+		'image'       => 'ultimate-dashboard.jpg',
+		'title'       => __( 'Ultimate Dashboard', 'better-admin-bar' ),
+		'subheadline' => __( 'Fully customize your WordPress dashboard.', 'better-admin-bar' ),
+		'text'        => __( 'Ultimate Dashboard is the #1 plugin to create a custom WordPress dashboard for you and your clients. It also comes with multisite support which makes it the perfect plugin for your WaaS network.', 'better-admin-bar' ),
+	),
+	array(
+		'url'         => 'https://wordpress.org/themes/page-builder-framework/',
+		'image'       => 'page-builder-framework.jpg',
+		'title'       => __( 'Page Builder Framework', 'better-admin-bar' ),
+		'subheadline' => __( 'The only theme you\'ll ever need.', 'better-admin-bar' ),
+		'text'        => __( 'With its minimalistic design the Page Builder Framework theme is the perfect foundation for your next project. Build blazing fast websites with a theme that is easy to use, lightweight & highly customizable.', 'better-admin-bar' ),
+	),
+	array(
+		'url'         => 'https://wordpress.org/plugins/responsive-youtube-vimeo-popup/',
+		'image'       => 'wp-video-popup.jpg',
+		'title'       => __( 'WP Video Popup', 'better-admin-bar' ),
+		'subheadline' => __( 'The #1 video popup plugin for WordPress.', 'better-admin-bar' ),
+		'text'        => __( 'Add a YouTube, Vimeo or Rumble video popup to WordPress. Lightweight, privacy-friendly lightbox that works with any page builder.', 'better-admin-bar' ),
+	),
+);
 ?>
 
 <div class="wrap heatbox-wrap swift-control-settings">
@@ -33,44 +47,26 @@ $GLOBALS['swift_control_widget_settings']  = $saved_widget_settings;
 			<div class="logo-container">
 
 				<div>
-					<span class="title">
-						<?php esc_html_e( 'Better Admin Bar', 'better-admin-bar' ); ?>
+					<h1 class="title">
+						<?php echo esc_html( get_admin_page_title() ); ?>
 						<span class="version"><?php echo esc_html( SWIFT_CONTROL_PLUGIN_VERSION ); ?></span>
-					</span>
-					<p class="subtitle"><?php esc_html_e( 'The WordPress Admin Bar reimagined.', 'better-admin-bar' ); ?></p>
+					</h1>
+					<p class="subtitle"><?php esc_html_e( 'The WordPress admin bar reimagined.', 'better-admin-bar' ); ?></p>
 				</div>
 
 				<div>
-					<img src="<?php echo esc_url( SWIFT_CONTROL_PLUGIN_URL ); ?>/assets/images/logo.png">
+					<img src="<?php echo esc_url( SWIFT_CONTROL_PLUGIN_URL . '/assets/img/logo.png' ); ?>" alt="">
 				</div>
 
 			</div>
 
-			<nav>
+			<nav aria-label="<?php esc_attr_e( 'Settings sections', 'better-admin-bar' ); ?>">
 				<ul class="heatbox-tab-nav">
-					<li class="heatbox-tab-nav-item swift-control-settings-panel">
-						<a href="#settings"><?php esc_html_e( 'Quick Access Panel', 'better-admin-bar' ); ?></a>
-					</li>
-					<li class="heatbox-tab-nav-item swift-control-admin-bar-panel">
-						<a href="#admin-bar"><?php esc_html_e( 'Admin Bar Settings', 'better-admin-bar' ); ?></a>
-					</li>
-					<li class="heatbox-tab-nav-item swift-control-tools-panel">
-						<a href="#tools"><?php esc_html_e( 'Tools', 'better-admin-bar' ); ?></a>
-					</li>
-					<li class="swift-control-preview">
-						<label for="swift_control_preview_toggle" class="toggle-switch">
-							<input
-								type="checkbox"
-								name="swift_control_preview_toggle"
-								id="swift_control_preview_toggle"
-								value="1"
-							/>
-							<div class="switch-track">
-								<div class="switch-thumb"></div>
-							</div>
-						</label>
-						<span class="preview-text"><?php esc_html_e( 'Preview', 'better-admin-bar' ); ?></span>
-					</li>
+					<?php foreach ( $swift_control_tabs as $swift_control_tab => $swift_control_tab_title ) : ?>
+						<li class="heatbox-tab-nav-item" data-panel="<?php echo esc_attr( $swift_control_tab ); ?>">
+							<a href="#<?php echo esc_attr( $swift_control_tab ); ?>"><?php echo esc_html( $swift_control_tab_title ); ?></a>
+						</li>
+					<?php endforeach; ?>
 				</ul>
 			</nav>
 
@@ -78,108 +74,85 @@ $GLOBALS['swift_control_widget_settings']  = $saved_widget_settings;
 
 	</div>
 
-	<div class="heatbox-container heatbox-container-center heatbox-form-container">
+	<div class="heatbox-container heatbox-container-center">
+		<!-- WordPress places admin notices after this marker -->
+		<hr class="wp-header-end">
+	</div>
 
-		<h1 style="display: none;"></h1>
+	<?php // The browser's checks would silently block saving for a field on a hidden tab; the values are cleaned on save. ?>
+	<form method="post" class="swift-control-settings-form general-settings-area" novalidate>
 
-		<form method="post" action="options.php" class="swift-control-settings-form general-settings-area">
+		<div class="heatbox-admin-panel" data-panel="settings">
+			<div class="heatbox-container heatbox-container-center heatbox-column-container">
 
-			<div class="saved-status-bar"><?php esc_html_e( 'Your settings have been saved.', 'better-admin-bar' ); ?></div>
+				<div class="heatbox-main">
+					<?php
+					require __DIR__ . '/settings/active-widgets.php';
+					require __DIR__ . '/settings/display-settings.php';
+					require __DIR__ . '/settings/color-settings.php';
+					require __DIR__ . '/settings/misc-settings.php';
+					require __DIR__ . '/settings/form-footer.php';
+					?>
+				</div>
 
-			<div class="heatbox-admin-panel swift-control-settings-panel">
-
-				<div class="heatbox-column-container">
-					<div class="heatbox-main">
-						<?php require_once __DIR__ . '/setting-boxes/active-widgets.php'; ?>
-
-						<!-- On mobile screen / when the layout is stacked, the heatboxes from the "heatbox-sidebar" will be moved here -->
-						<div class="stacked-heatbox-placeholder"></div>
-
-						<?php
-						require_once __DIR__ . '/setting-boxes/display-settings.php';
-						require_once __DIR__ . '/setting-boxes/color-settings.php';
-						require_once __DIR__ . '/setting-boxes/misc-settings.php';
-						?>
-					</div>
-
-					<div class="heatbox-sidebar">
-						<?php
-						require_once __DIR__ . '/setting-boxes/available-widgets.php';
-						require_once __DIR__ . '/setting-boxes/pro-widgets.php';
-						?>
-					</div>
+				<div class="heatbox-sidebar">
+					<?php
+					require __DIR__ . '/settings/available-widgets.php';
+					require __DIR__ . '/settings/pro-widgets.php';
+					require __DIR__ . '/settings/review.php';
+					?>
 				</div>
 
 			</div>
+		</div>
 
-			<div class="heatbox-admin-panel swift-control-admin-bar-panel">
+		<div class="heatbox-admin-panel" data-panel="admin-bar">
+			<div class="heatbox-container heatbox-container-center">
 				<?php
-				require_once __DIR__ . '/setting-boxes/admin-bar-settings.php';
-				?>
-			</div>
-
-			<p class="submit">
-				<button type="button" name="submit" id="submit" class="button button-primary button-larger save-general-settings" value="Save Changes">
-					<?php esc_html_e( 'Save Changes', 'better-admin-bar' ); ?>
-				</button>
-			</p>
-
-		</form>
-
-		<div class="heatbox-admin-panel swift-control-tools-panel">
-			<div class="swift-control-tools-container">
-				<?php
-				require_once __DIR__ . '/setting-boxes/export-widgets.php';
-				require_once __DIR__ . '/setting-boxes/import-widgets.php';
+				require __DIR__ . '/settings/admin-bar-settings.php';
+				require __DIR__ . '/settings/form-footer.php';
 				?>
 			</div>
 		</div>
 
+	</form>
+
+	<div class="heatbox-admin-panel" data-panel="tools">
+		<div class="heatbox-container heatbox-container-center">
+			<div class="heatbox-columns">
+				<?php
+				require __DIR__ . '/settings/export.php';
+				require __DIR__ . '/settings/import.php';
+				?>
+			</div>
+		</div>
+	</div>
+
+	<div class="heatbox-container heatbox-container-center">
 		<div class="heatbox-divider"></div>
+	</div>
 
-		<div class="heatbox-container heatbox-container-wide heatbox-container-center featured-products">
+	<div class="heatbox-container heatbox-container-wide heatbox-container-center heatbox-products">
 
-			<h2><?php esc_html_e( 'Check out our other free WordPress products!', 'better-admin-bar' ); ?></h2>
+		<h2><?php esc_html_e( 'Check out our other free WordPress products!', 'better-admin-bar' ); ?></h2>
 
-			<ul class="products">
+		<ul class="products">
+			<?php foreach ( $swift_control_products as $swift_control_product ) : ?>
 				<li class="heatbox">
-					<a href="https://wordpress.org/plugins/ultimate-dashboard/" target="_blank">
-						<img src="<?php echo esc_url( SWIFT_CONTROL_PLUGIN_URL ); ?>/assets/images/ultimate-dashboard.jpg">
+					<a href="<?php echo esc_url( $swift_control_product['url'] ); ?>" target="_blank" aria-hidden="true" tabindex="-1">
+						<img src="<?php echo esc_url( SWIFT_CONTROL_PLUGIN_URL . '/assets/img/' . $swift_control_product['image'] ); ?>" alt="">
 					</a>
 					<div class="heatbox-content">
-						<h3><?php esc_html_e( 'Ultimate Dashboard', 'better-admin-bar' ); ?></h3>
-						<p class="subheadline"><?php esc_html_e( 'Fully customize your WordPress Dashboard.', 'better-admin-bar' ); ?></p>
-						<p><?php esc_html_e( 'Ultimate Dashboard is the #1 plugin to create a Custom WordPress Dashboard for you and your clients. It also comes with Multisite Support which makes it the perfect plugin for your WaaS network.', 'better-admin-bar' ); ?></p>
-						<a href="https://wordpress.org/plugins/ultimate-dashboard/" target="_blank" class="button"><?php esc_html_e( 'View Features', 'better-admin-bar' ); ?></a>
+						<h3><?php echo esc_html( $swift_control_product['title'] ); ?></h3>
+						<p class="subheadline"><?php echo esc_html( $swift_control_product['subheadline'] ); ?></p>
+						<p><?php echo esc_html( $swift_control_product['text'] ); ?></p>
+						<a href="<?php echo esc_url( $swift_control_product['url'] ); ?>" target="_blank" class="button"><?php esc_html_e( 'Learn more', 'better-admin-bar' ); ?><span class="screen-reader-text"> <?php esc_html_e( '(opens in a new tab)', 'better-admin-bar' ); ?></span></a>
 					</div>
 				</li>
-				<li class="heatbox">
-					<a href="https://wordpress.org/themes/page-builder-framework/" target="_blank">
-						<img src="<?php echo esc_url( SWIFT_CONTROL_PLUGIN_URL ); ?>/assets/images/page-builder-framework.jpg">
-					</a>
-					<div class="heatbox-content">
-						<h3><?php esc_html_e( 'Page Builder Framework', 'better-admin-bar' ); ?></h3>
-						<p class="subheadline"><?php esc_html_e( 'The only Theme you\'ll ever need.', 'better-admin-bar' ); ?></p>
-						<p class="description"><?php esc_html_e( 'With its minimalistic design the Page Builder Framework theme is the perfect foundation for your next project. Build blazing fast websites with a theme that is easy to use, lightweight & highly customizable.', 'better-admin-bar' ); ?></p>
-						<a href="https://wordpress.org/themes/page-builder-framework/" target="_blank" class="button"><?php esc_html_e( 'View Features', 'better-admin-bar' ); ?></a>
-					</div>
-				</li>
-				<li class="heatbox">
-					<a href="https://wordpress.org/plugins/responsive-youtube-vimeo-popup/" target="_blank">
-						<img src="<?php echo esc_url( SWIFT_CONTROL_PLUGIN_URL ); ?>/assets/images/wp-video-popup.jpg">
-					</a>
-					<div class="heatbox-content">
-						<h3><?php esc_html_e( 'WP Video Popup', 'better-admin-bar' ); ?></h3>
-						<p class="subheadline"><?php esc_html_e( 'The #1 Video Popup Plugin for WordPress.', 'better-admin-bar' ); ?></p>
-						<p><?php esc_html_e( 'Add beautiful responsive YouTube & Vimeo video lightbox popups to any post, page or custom post type of website without sacrificing performance.', 'better-admin-bar' ); ?></p>
-						<a href="https://wordpress.org/plugins/responsive-youtube-vimeo-popup/" target="_blank" class="button"><?php esc_html_e( 'View Features', 'better-admin-bar' ); ?></a>
-					</div>
-				</li>
-			</ul>
+			<?php endforeach; ?>
+		</ul>
 
-			<p class="credit"><?php esc_html_e( 'Made with ❤ in Torsby, Sweden', 'better-admin-bar' ); ?></p>
-
-		</div>
+		<p class="credit"><?php esc_html_e( 'Made with ❤ in Torsby, Sweden', 'better-admin-bar' ); ?></p>
 
 	</div>
 

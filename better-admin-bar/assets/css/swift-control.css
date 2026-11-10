@@ -1,13 +1,3 @@
-@-webkit-keyframes slidingArrow {
-	from {
-		left: 62px;
-	}
-
-	to {
-		left: 70px;
-	}
-}
-
 @keyframes slidingArrow {
 	from {
 		left: 62px;
@@ -15,16 +5,6 @@
 
 	to {
 		left: 70px;
-	}
-}
-
-@-webkit-keyframes slidingArrowReversed {
-	from {
-		right: 62px;
-	}
-
-	to {
-		right: 70px;
 	}
 }
 
@@ -62,7 +42,7 @@ body.has-swift-control {
 
 .swift-control-widgets.is-adjusting {
 	transition-property: all;
-	transition-duration: 350;
+	transition-duration: 0.35s;
 }
 
 .swift-control-widgets.is-hidden {
@@ -87,42 +67,29 @@ body.has-swift-control {
 	user-select: none;
 	/* Must be on top of .wpbf-navigation (z-index: 555) and #wpadminbar (z-index: 99999) */
 	z-index: 100000;
+	/* One shadow around the whole column (the widgets are separate boxes). */
+	filter: drop-shadow(0 10px 24px rgba(40, 0, 80, 0.16)) drop-shadow(0 1px 2px rgba(40, 0, 80, 0.08));
 	transition: left 0.35s, opacity 0.25s;
-}
-
-.swift-control-widgets .swift-control-widget-setting .swift-control-widget-link {
-	background-color: #860ee6;
-}
-
-.swift-control-widgets .swift-control-widget-setting .swift-control-widget-link:hover {
-	background-color: #860ee6;
-}
-
-.swift-control-widgets .swift-control-widget-setting a {
-	color: #fff;
 }
 
 .swift-control-widgets.is-hidden-mode .swift-control-widget-setting::after,
 .swift-control-widgets.is-expanded .swift-control-widget-setting::after {
 	opacity: 0;
-	-webkit-transition: all 0.3s;
-	transition: all 0.3s;
+	transition: opacity 0.3s;
 }
 
 .swift-control-widgets.is-dragged-right .swift-control-widget-setting::after,
 .swift-control-widgets.is-pinned-right .swift-control-widget-setting::after {
 	left: auto;
 	right: 62px;
-	content: "\f061";
-	-webkit-animation: slidingArrowReversed 1s ease-in-out infinite alternate;
+	transform: scaleX(-1);
 	animation: slidingArrowReversed 1s ease-in-out infinite alternate;
 }
 
 .swift-control-widgets.is-dragged-left .swift-control-widget-setting::after {
 	left: 62px;
 	right: auto;
-	content: "\f060";
-	-webkit-animation: slidingArrow 1s ease-in-out infinite alternate;
+	transform: none;
 	animation: slidingArrow 1s ease-in-out infinite alternate;
 }
 
@@ -134,14 +101,15 @@ body.has-swift-control {
 	display: none;
 	position: absolute;
 	left: 62px;
-	content: "\f060";
-	font-family: "Font Awesome 5 Free";
-	font-weight: 900;
+	width: 16px;
+	height: 16px;
+	content: "";
 	color: #860ee6;
-	-webkit-animation: slidingArrow 1s ease-in-out infinite alternate;
+	background-color: currentColor;
+	-webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m12 19-7-7 7-7'/%3E%3Cpath d='M19 12H5'/%3E%3C/svg%3E") center / contain no-repeat;
+	mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m12 19-7-7 7-7'/%3E%3Cpath d='M19 12H5'/%3E%3C/svg%3E") center / contain no-repeat;
 	animation: slidingArrow 1s ease-in-out infinite alternate;
-	-webkit-transition: all 1s;
-	transition: all 1s;
+	transition: opacity 1s;
 }
 
 .swift-control-widgets.is-pinned-right.is-expanded .swift-control-widget-item {
@@ -161,11 +129,7 @@ body.has-swift-control {
 }
 
 .swift-control-widgets .swift-control-widget-item {
-	display: -webkit-box;
-	display: -ms-flexbox;
 	display: flex;
-	-webkit-box-align: center;
-	-ms-flex-align: center;
 	align-items: center;
 	position: relative;
 	left: -55px;
@@ -187,27 +151,99 @@ body.has-swift-control {
 	visibility: visible;
 }
 
-.swift-control-widgets .swift-control-widget-setting .swift-control-widget-link {
+.swift-control-widgets .swift-control-widget-link {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	box-sizing: content-box;
+	width: 55px;
+	height: 55px;
+	color: #2b2b33;
+	background-color: #fff;
+	border-top: 1px solid rgba(0, 0, 0, 0.07);
+	text-decoration: none;
+	box-shadow: none;
+	transition: background-color 0.15s, color 0.15s, border-radius 0.2s;
+}
+
+.swift-control-widgets .swift-control-widget-link:hover,
+.swift-control-widgets .swift-control-widget-link:focus-visible {
+	background-color: #f4f2f9;
+}
+
+/* The settings button: opens & closes the panel. */
+.swift-control-widgets .swift-control-widget-setting a,
+.swift-control-widgets .swift-control-widget-setting a:hover {
+	color: #fff;
+	background-color: #860ee6;
 	border-top-width: 0;
 }
 
-.swift-control-widgets .swift-control-widget-link {
-	display: inline-block;
-	width: 55px;
-	height: 55px;
-	line-height: 55px;
-	text-align: center;
-	color: #616666;
-	background-color: #f5f5f7;
-	border-top: 1px solid #e1e1e7;
+/*
+ * Rounded column, flat on the side of the screen edge: the settings button alone, or the top & bottom of the open panel.
+ *
+ * The corners follow the edge the panel sticks to: the left one, the right one (is-pinned-right), and while dragging
+ * the side it will stick to when dropped (is-dragged-left / is-dragged-right, switched at the middle of the screen).
+ */
+.swift-control-widgets {
+	--swift-control-corners-alone: 0 14px 14px 0;
+	--swift-control-corners-top: 0 14px 0 0;
+	--swift-control-corners-bottom: 0 0 14px 0;
 }
 
-.swift-control-widgets .swift-control-widget-link:hover {
-	background-color: #ededf0;
+.swift-control-widgets.is-pinned-right,
+.swift-control-widgets.is-dragged-right {
+	--swift-control-corners-alone: 14px 0 0 14px;
+	--swift-control-corners-top: 14px 0 0 0;
+	--swift-control-corners-bottom: 0 0 0 14px;
 }
 
-.swift-control-widgets .is-disabled .swift-control-widget-link i {
-	opacity: .4;
+.swift-control-widgets.is-pinned-right.is-dragged-left {
+	--swift-control-corners-alone: 0 14px 14px 0;
+	--swift-control-corners-top: 0 14px 0 0;
+	--swift-control-corners-bottom: 0 0 14px 0;
+}
+
+/*
+ * When the panel closes, the bottom corner of the settings button rounds once the first widget fades out
+ * (--swift-control-radius-delay, set by the template & the preview). Not while dragging, the corners switch right away.
+ */
+.swift-control-widgets .swift-control-widget-setting .swift-control-widget-link {
+	border-radius: var(--swift-control-corners-alone);
+	transition: background-color 0.15s, color 0.15s, border-radius 0.25s var(--swift-control-radius-delay, 0s);
+}
+
+.swift-control-widgets.is-expanded .swift-control-widget-setting .swift-control-widget-link {
+	border-radius: var(--swift-control-corners-top);
+}
+
+.swift-control-widgets.is-expanded .swift-control-widget-setting .swift-control-widget-link,
+.swift-control-widgets.is-dragging .swift-control-widget-setting .swift-control-widget-link {
+	transition-delay: 0s;
+}
+
+.swift-control-widgets .swift-control-widget-item:last-child .swift-control-widget-link {
+	border-radius: var(--swift-control-corners-bottom);
+}
+
+/* --swift-control-icon-size: the "Icon size" setting. */
+.swift-control-widgets .swift-control-icon {
+	display: block;
+	width: var(--swift-control-icon-size, 20px);
+	height: var(--swift-control-icon-size, 20px);
+	margin: 0;
+	padding: 0;
+	pointer-events: none;
+}
+
+.swift-control-widgets .is-disabled .swift-control-widget-link .swift-control-icon {
+	opacity: 0.4;
+}
+
+.swift-control-widgets .is-disabled .swift-control-widget-link:hover {
+	color: #2b2b33;
+	background-color: #fff;
+	cursor: default;
 }
 
 .swift-control-widgets .is-disabled .swift-control-widget-title {
@@ -224,18 +260,45 @@ body.has-swift-control {
 	position: absolute;
 	left: 55px;
 	margin-left: 0;
-	padding: 7px 10px;
+	padding: 8px 11px;
 	width: max-content;
 	line-height: 1;
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 	font-size: 12px !important;
-	font-weight: 400 !important;
+	font-weight: 600 !important;
 	color: #fff;
-	background-color: rgba(62, 67, 73, 0.8);
-	border-radius: 4px;
+	background-color: #2b2b33;
+	border-radius: 6px;
 	opacity: 0;
 	visibility: hidden;
-	-webkit-transition: all 0.2s linear;
 	transition: all 0.2s linear;
+}
+
+/* Tooltip arrow, pointing at the panel. */
+.swift-control-widgets .swift-control-widget-title::before {
+	position: absolute;
+	top: 50%;
+	right: 100%;
+	margin-top: -5px;
+	content: "";
+	border: 5px solid transparent;
+	border-right-color: #2b2b33;
+}
+
+.swift-control-widgets.is-pinned-right .swift-control-widget-title::before {
+	right: auto;
+	left: 100%;
+	border-right-color: transparent;
+	border-left-color: #2b2b33;
+}
+
+.swift-control-widgets .is-disabled .swift-control-widget-title::before {
+	border-right-color: #bbb;
+}
+
+.swift-control-widgets.is-pinned-right .is-disabled .swift-control-widget-title::before {
+	border-right-color: transparent;
+	border-left-color: #bbb;
 }
 
 .swift-control-widgets.is-pinned-right .swift-control-widget-link:hover + .swift-control-widget-title {
@@ -247,11 +310,6 @@ body.has-swift-control {
 	margin-left: 9px;
 	visibility: visible;
 	opacity: 1;
-}
-
-/* Draggable */
-.moveable-control-box {
-	overflow: hidden;
 }
 
 .swift-control-helper-panels {
@@ -292,13 +350,6 @@ body.has-swift-control {
 	margin-left: -0.5px;
 	opacity: 0;
 	animation: none;
-}
-
-/* for dev only */
-.developer-mode .swift-control-helper-panels .horizontal-panel,
-.developer-mode .swift-control-helper-panels .center-panel {
-	opacity: 0.4;
-	animation: helperPanelOpacity 1.5s ease-in-out infinite alternate;
 }
 
 .swift-control-helper-panels .right-panel {

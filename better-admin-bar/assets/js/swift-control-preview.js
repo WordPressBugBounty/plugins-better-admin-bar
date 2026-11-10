@@ -61,6 +61,12 @@
 			expandPanelCheckbox.addEventListener("change", handleExpandPanelChange);
 		}
 
+		var iconSizeField = document.getElementById("icon_size");
+
+		if (iconSizeField) {
+			iconSizeField.addEventListener("input", handleIconSizeChange);
+		}
+
 		var colorFieldsWithInstantPreview = document.querySelectorAll(
 			".color-picker-field.has-instant-preview"
 		);
@@ -73,6 +79,22 @@
 				handleColorFieldChange
 			);
 		});
+	}
+
+	/**
+	 * Show the icon size in the preview. Empty or out of range uses the default / nearest limit, like saving does.
+	 *
+	 * @param {Event} e The input event of the icon size field.
+	 */
+	function handleIconSizeChange(e) {
+		var field = e.target;
+		var size = parseInt(field.value, 10);
+
+		// Empty: the default, it's the placeholder.
+		if (isNaN(size)) size = parseInt(field.placeholder, 10);
+
+		size = Math.min(parseInt(field.max, 10), Math.max(parseInt(field.min, 10), size));
+		menu.style.setProperty("--swift-control-icon-size", size + "px");
 	}
 
 	function handleRemoveIndicatorChange(e) {
@@ -128,7 +150,7 @@
 			case "setting_button_icon_color":
 				styleContent =
 					"\
-					.swift-control-widgets .swift-control-widget-setting a {\
+					.swift-control-widgets .swift-control-widget-setting a, .swift-control-widgets .swift-control-widget-setting a:hover {\
 						color: " +
 					hexColor +
 					";\

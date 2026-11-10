@@ -1,103 +1,119 @@
+/**
+ * Settings page: color pickers, the role checkboxes & saving the settings.
+ *
+ * Used global objects: ajaxurl, jQuery, SwiftControl.
+ */
 (function ($) {
+	var form = document.querySelector(".swift-control-settings-form");
 	var isRequesting = false;
-	var elms = {};
-	var $elms = {};
-	var loading = {};
-	var ajax = {};
+	var noticeTimeout = 0;
 
-	var adminBarRemovalRoles = [];
+	if (!form) return;
 
 	/**
-	 * Call the main functions here.
+	 * Color pickers, with an instant preview of the quick access panel.
 	 */
-	function init() {
-		elms.saveButton = document.querySelector("button.save-general-settings");
-		elms.savedStatusBar = document.querySelector(
-			".general-settings-area .saved-status-bar"
-		);
-		elms.settingFields = document.querySelectorAll(
-			".general-settings-area .general-setting-field"
-		);
-
-		setupColorPicker();
-
-		elms.saveButton.addEventListener("click", function (e) {
-			e.preventDefault();
-			ajax.saveSettings();
-		});
-
-		setupAdminBarRemovalRoles();
-	}
-
-	/**
-	 * Setup color picker for color picker fields.
-	 */
-	function setupColorPicker() {
-		var colorFieldsWithInstantPreview = document.querySelectorAll(
-			".color-picker-field.has-instant-preview"
-		);
-
-		var colorFieldIdsWithInstantPreview = [];
-
-		colorFieldsWithInstantPreview.forEach(function (el) {
-			colorFieldIdsWithInstantPreview.push(el.id);
-		});
-
-		$(".color-picker-field").wpColorPicker({
-			palettes: true,
-			hide: true,
-			change: function (e, ui) {
-				var id = e.target.id;
-				var color;
-
-				if (colorFieldIdsWithInstantPreview.includes(id)) {
-					color = ui.color.toString();
+	function setupColorPickers() {
+		$(form)
+			.find(".color-picker-field")
+			.wpColorPicker({
+				palettes: true,
+				hide: true,
+				change: function (e, ui) {
+					if (!e.target.classList.contains("has-instant-preview")) return;
 
 					document.dispatchEvent(
-						new CustomEvent("swift_control_" + id + "_change", {
+						new CustomEvent("swift_control_" + e.target.id + "_change", {
 							detail: {
-								fieldId: id,
-								hexColor: color,
+								fieldId: e.target.id,
+								hexColor: ui.color.toString(),
 							},
-							bubbles: false,
 						})
 					);
-				}
-			},
+				},
+			});
+	}
+
+	/**
+	 * "All users" checks & locks every role. Unchecking it brings back the roles picked before.
+	 */
+	function setupRoles() {
+		var all = form.querySelector(".remove-by-roles-all");
+		var roles = form.querySelectorAll(".remove-by-roles-role");
+		var picked = [];
+
+		if (!all) return;
+
+		all.addEventListener("change", function () {
+			if (all.checked) {
+				picked = [];
+
+				roles.forEach(function (role) {
+					if (role.checked) picked.push(role.value);
+				});
+			}
+
+			roles.forEach(function (role) {
+				role.checked = all.checked || picked.indexOf(role.value) !== -1;
+				role.disabled = all.checked;
+			});
 		});
 	}
 
-	loading.start = function () {
-		elms.saveButton.classList.add("is-loading");
-	};
+	/**
+	 * Show a message next to every save button.
+	 *
+	 * @param {string} type    "success" or "error".
+	 * @param {string} message The message.
+	 */
+	function showNotice(type, message) {
+		var notices = form.querySelectorAll(".swift-control-notice");
 
-	loading.stop = function () {
-		elms.saveButton.classList.remove("is-loading");
-	};
+		clearTimeout(noticeTimeout);
+
+		notices.forEach(function (notice) {
+			notice.textContent = message;
+			notice.classList.remove("is-success", "is-error");
+			notice.classList.add("is-shown", "is-" + type);
+		});
+
+		noticeTimeout = setTimeout(function () {
+			notices.forEach(function (notice) {
+				notice.classList.remove("is-shown");
+			});
+		}, 2500);
+	}
 
 	/**
-	 * Send ajax request to save the settings.
+	 * Collect the fields & save them.
 	 */
-	ajax.saveSettings = function () {
+	function saveSettings() {
+		var buttons = form.querySelectorAll(".save-general-settings");
+		var data = {
+			action: "swift_control_save_general_settings",
+			nonce: SwiftControl.nonces.saveGeneralSettings,
+			remove_by_roles: [],
+		};
+
 		if (isRequesting) return;
 		isRequesting = true;
-		loading.start();
 
-		var data = {};
+		form.querySelectorAll(".general-setting-field").forEach(function (field) {
+			data[field.name] =
+				field.type === "checkbox" ? (field.checked ? 1 : 0) : field.value;
+		});
 
-		data.action = "swift_control_save_general_settings";
-		data.nonce = SwiftControl.nonces.saveGeneralSettings;
-
-		[].slice.call(elms.settingFields).forEach(function (field) {
-			if (field.type === "checkbox") {
-				data[field.name] = field.checked ? 1 : 0;
-			} else if (field.tagName.toLowerCase() === "select") {
-				if (field.name === "remove_by_roles[]") {
-					data[field.name] = adminBarRemovalRoles;
+		form
+			.querySelectorAll('input[name="remove_by_roles[]"]:checked')
+			.forEach(function (role) {
+				// "All users" covers the roles.
+				if (data.remove_by_roles.indexOf("all") === -1) {
+					data.remove_by_roles.push(role.value);
 				}
-			} else {
-				data[field.name] = field.value;
-			}
+			});
+
+		buttons.forEach(function (button) {
+			button.classList.add("is-loading");
 		});
 
 		$.ajax({
@@ -107,81 +123,29 @@
 			data: data,
 		})
 			.done(function (r) {
-				switchSavedStatus("show");
-
-				// We need some delay to give visual effect.
-				setTimeout(function () {
-					switchSavedStatus("hide");
-				}, 2500);
+				if (r && r.success) {
+					showNotice("success", SwiftControl.labels.saved);
+				} else {
+					showNotice("error", r && r.data ? r.data : SwiftControl.labels.error);
+				}
+			})
+			.fail(function () {
+				showNotice("error", SwiftControl.labels.error);
 			})
 			.always(function () {
-				loading.stop();
+				buttons.forEach(function (button) {
+					button.classList.remove("is-loading");
+				});
+
 				isRequesting = false;
 			});
-	};
-
-	/**
-	 * Switch saved status in the metabox headers.
-	 *
-	 * @param {string} state Whether or not to show the "Saved" status.
-	 *                       Accepted values: "show" or "hide". Default is "show".
-	 */
-	function switchSavedStatus(state) {
-		if (state === "hide") {
-			elms.savedStatusBar.classList.remove("is-shown");
-		} else {
-			elms.savedStatusBar.classList.add("is-shown");
-		}
 	}
 
-	function setupAdminBarRemovalRoles() {
-		$elms.removeAdminBar = $(".swift-control-settings .remove-admin-bar");
-		var selectedRoles = [];
+	setupColorPickers();
+	setupRoles();
 
-		$elms.removeAdminBar.select2();
-
-		setAdminBarRemovalRoles($elms.removeAdminBar.select2("data"));
-
-		$elms.removeAdminBar.on("select2:select", function (e) {
-			var roleObjects = $elms.removeAdminBar.select2("data");
-			var newSelections = [];
-
-			if (e.params.data.id === "all") {
-				$elms.removeAdminBar.val("all");
-				$elms.removeAdminBar.trigger("change");
-			} else {
-				if (roleObjects.length) {
-					roleObjects.forEach(function (role) {
-						if (role.id !== "all") {
-							newSelections.push(role.id);
-						}
-					});
-
-					$elms.removeAdminBar.val(newSelections);
-					$elms.removeAdminBar.trigger("change");
-				}
-			}
-
-			// Use the modified list.
-			setAdminBarRemovalRoles($elms.removeAdminBar.select2("data"));
-		});
-
-		$elms.removeAdminBar.on("select2:unselect", function (e) {
-			setAdminBarRemovalRoles($elms.removeAdminBar.select2("data"));
-		});
-	}
-
-	function setAdminBarRemovalRoles(roleObjects) {
-		adminBarRemovalRoles = [];
-
-		if (!roleObjects || !roleObjects.length) {
-			return;
-		}
-
-		roleObjects.forEach(function (role) {
-			adminBarRemovalRoles.push(role.id);
-		});
-	}
-
-	init();
+	form.addEventListener("submit", function (e) {
+		e.preventDefault();
+		saveSettings();
+	});
 })(jQuery);

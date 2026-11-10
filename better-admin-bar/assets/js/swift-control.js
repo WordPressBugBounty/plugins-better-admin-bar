@@ -91,7 +91,13 @@
 	}
 
 	function setupInteract() {
-		window.addEventListener('load', setupPosition);
+		// The page may be loaded already (scripts delayed by a caching plugin), then "load" doesn't come anymore.
+		if (document.readyState === 'complete') {
+			setupPosition({ type: 'load' });
+		} else {
+			window.addEventListener('load', setupPosition);
+		}
+
 		window.addEventListener('resize', setupPosition);
 
 		var draggable = interact('.swift-control-widgets').draggable({
@@ -204,7 +210,7 @@
 		docWidth = document.documentElement.clientWidth;
 		halfHeight = document.documentElement.clientHeight / 2;
 
-		position.x = position.x_direction === 'left' ? position.x = 0 : docWidth - widgetSize;
+		position.x = position.x_direction === 'left' ? 0 : docWidth - widgetSize;
 		position.y = (position.y_percentage / 100) * halfHeight;
 		position.y = position.y > halfHeight ? halfHeight - (swiftControlOpt.size / 2) : position.y;
 		position.y = position.y_direction === 'top' ? position.y * -1 : position.y;
@@ -269,8 +275,6 @@
 			type: 'post',
 			dataType: 'json',
 			data: data
-		}).done(function (r) {
-			// console.log(r.data);
 		}).fail(function () {
 			console.log('Failed to save widget position');
 		});

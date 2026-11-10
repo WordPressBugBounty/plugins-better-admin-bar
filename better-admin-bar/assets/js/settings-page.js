@@ -1,197 +1,62 @@
 /**
- * This script is intended to handle the settings page.
- *
- * @param {Object} $ jQuery object.
- * @return {Object}
+ * Settings page: tabs & fields that depend on a checkbox.
  */
-(function ($) {
+(function () {
+	var tabs = document.querySelectorAll(".swift-control-settings .heatbox-tab-nav-item");
+	var panels = document.querySelectorAll(".swift-control-settings .heatbox-admin-panel");
+
 	/**
-	 * Initialize the module, call the main functions.
+	 * Show the panel of a tab.
 	 *
-	 * This function is the only function that should be called on top level scope.
-	 * Other functions are called / hooked from this function.
+	 * @param {string} name The panel name.
 	 */
-	function init() {
-		setupTabsNavigation();
-		setupChainingFields();
-	}
+	function showPanel(name) {
+		var found = false;
 
-	/**
-	 * Setup the tabs navigation for settings page.
-	 */
-	function setupTabsNavigation() {
-		$(".heatbox-tab-nav-item").on("click", function () {
-			$(".heatbox-tab-nav-item").removeClass("active");
-			$(this).addClass("active");
-
-			var link = this.querySelector("a");
-
-			if (link.href.indexOf("#") === -1) return;
-
-			var hashValue = link.href.substring(link.href.indexOf("#") + 1);
-
-			if ("tools" === hashValue) {
-				$(".general-settings-area .submit").hide();
-			} else {
-				$(".general-settings-area .submit").show();
-			}
-
-			$(".heatbox-form-container .heatbox-admin-panel").css("display", "none");
-
-			$(".heatbox-form-container .swift-control-" + hashValue + "-panel").css(
-				"display",
-				"block"
-			);
+		panels.forEach(function (panel) {
+			if (panel.dataset.panel === name) found = true;
 		});
 
-		window.addEventListener("load", function () {
-			var hashValue = window.location.hash.substring(1);
-			var currentActiveTabMenu;
+		if (!found) name = "settings";
 
-			if (!hashValue) {
-				currentActiveTabMenu = document.querySelector(
-					".heatbox-tab-nav-item.active"
-				);
-				hashValue = currentActiveTabMenu
-					? currentActiveTabMenu.dataset.tab
-					: "";
-				hashValue = hashValue ? hashValue : "settings";
-			}
+		panels.forEach(function (panel) {
+			panel.style.display = panel.dataset.panel === name ? "block" : "none";
+		});
 
-			if ("tools" === hashValue) {
-				$(".general-settings-area .submit").hide();
-			} else {
-				$(".general-settings-area .submit").show();
-			}
-
-			$(".heatbox-tab-nav-item").removeClass("active");
-			$(".heatbox-tab-nav-item.swift-control-" + hashValue + "-panel").addClass(
-				"active"
-			);
-
-			$(".heatbox-form-container .heatbox-admin-panel").css("display", "none");
-
-			$(".heatbox-form-container .swift-control-" + hashValue + "-panel").css(
-				"display",
-				"block"
-			);
+		tabs.forEach(function (tab) {
+			tab.classList.toggle("active", tab.dataset.panel === name);
 		});
 	}
 
 	/**
-	 * Setup fields chaining/ dependency.
-	 */
-	function setupChainingFields() {
-		var selectors = [
-			"[data-show-if-field]",
-			"[data-hide-if-field]",
-			"[data-show-if-field-checked]",
-			"[data-show-if-field-unchecked]",
-		];
-
-		selectors.forEach(function (selector) {
-			var children = document.querySelectorAll(selector);
-			if (!children.length) return;
-
-			[].slice.call(children).forEach(function (child) {
-				setupChainingEvent(child, selector);
-			});
-		});
-	}
-
-	/**
-	 * Setup fields chaining event.
+	 * Show or hide an element depending on a checkbox.
 	 *
-	 * @param {HTMLElement} child The children element.
-	 * @param selector child The selector that belongs to the children element.
+	 * @param {HTMLElement} child The element with a data-show-if-field-(un)checked attribute.
 	 */
-	function setupChainingEvent(child, selector) {
-		var parentName = child.getAttribute(
-			selector.replace("[", "").replace("]", "")
-		);
-		var parentField = document.querySelector("#" + parentName);
+	function setupDependency(child) {
+		var showIfChecked = child.hasAttribute("data-show-if-field-checked");
+		var parentId = showIfChecked
+			? child.dataset.showIfFieldChecked
+			: child.dataset.showIfFieldUnchecked;
+		var parent = document.getElementById(parentId);
 
-		var shownDisplayType = window.getComputedStyle(child).display;
-		shownDisplayType = shownDisplayType ? shownDisplayType : "block";
+		if (!parent) return;
 
-		checkChainingState(child, shownDisplayType, parentField);
-
-		if (parentField.classList.contains("use-select2")) {
-			$(parentField).on("change", function (e) {
-				checkChainingState(child, shownDisplayType, parentField);
-			});
-		} else {
-			parentField.addEventListener("change", function (e) {
-				checkChainingState(child, shownDisplayType, parentField);
-			});
+		function update() {
+			child.hidden = parent.checked !== showIfChecked;
 		}
+
+		parent.addEventListener("change", update);
+		update();
 	}
 
-	/**
-	 * Check the children state: shown or hidden.
-	 *
-	 * @param {HTMLElement} child The children element.
-	 * @param string shownDisplayType The display type of child when it's shown (e.g: "flex" or "block").
-	 * @param {HTMLElement} parent The parent/ dependency element.
-	 */
-	function checkChainingState(child, shownDisplayType, parent) {
-		var parentTagName = parent.tagName.toLocaleLowerCase();
+	window.addEventListener("hashchange", function () {
+		showPanel(location.hash.slice(1));
+	});
 
-		if (parentTagName === "input" && parent.type === "checkbox") {
-			// Handle "data-show-if-field-checked".
-			if (child.hasAttribute("data-show-if-field-checked")) {
-				if (parent.checked) {
-					child.style.display = shownDisplayType;
-				} else {
-					child.style.display = "none";
-				}
-			} else {
-				// Handle "data-show-if-field-unchecked".
-				if (!parent.checked) {
-					child.style.display = shownDisplayType;
-				} else {
-					child.style.display = "none";
-				}
-			}
+	showPanel(location.hash.slice(1));
 
-			return;
-		}
-
-		var wantedValue = child.hasAttribute("data-show-if-field")
-			? child.dataset.showIfValue
-			: child.dataset.hideIfValue;
-		var parentValue;
-
-		if (parentTagName === "select") {
-			if (parent.multiple) {
-				parentValue = $(parent).val();
-				wantedValue = JSON.parse(wantedValue);
-			} else {
-				if (parent.selectedIndex > -1) {
-					parentValue = parent.options[parent.selectedIndex].value;
-				}
-			}
-		} else {
-			parentValue = parent.value;
-		}
-
-		// Handle "data-show-if-field".
-		if (child.hasAttribute("data-show-if-field")) {
-			if (parentValue === wantedValue) {
-				child.style.display = shownDisplayType;
-			} else {
-				child.style.display = "none";
-			}
-		} else {
-			// Handle "data-hide-if-field".
-			if (JSON.stringify(parentValue) === JSON.stringify(wantedValue)) {
-				child.style.display = "none";
-			} else {
-				child.style.display = shownDisplayType;
-			}
-		}
-	}
-
-	// Run the module.
-	init();
-})(jQuery);
+	document
+		.querySelectorAll("[data-show-if-field-checked], [data-show-if-field-unchecked]")
+		.forEach(setupDependency);
+})();

@@ -1,71 +1,76 @@
-/* Icon Picker */
+/* Icon picker */
 .icon-picker-container {
-  position: absolute;
-  width: 260px;
-  height: 300px;
-  font-size: 14px;
-  background-color: #fff;
-  overflow: hidden;
-  padding: 10px 5px 5px 5px;
-  border: 1px solid #ddd;
-  z-index: 10;
+	position: absolute;
+	z-index: 10;
+	width: 300px;
+	padding: 8px;
+	font-size: 14px;
+	background-color: var(--heatbox-surface, #fff);
+	border: 1px solid var(--heatbox-box-border, #e2e4e7);
+	border-radius: var(--heatbox-radius, 8px);
+	box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
 }
 
-.icon-picker-container,
-.icon-picker-container span {
-  box-sizing: content-box !important;
+.icon-picker-container .icon-picker-search {
+	width: 100%;
+}
+
+.icon-picker-container .icon-picker-message {
+	margin: 8px 0 0;
+	color: var(--heatbox-text-muted, #646970);
+}
+
+.icon-picker-container .icon-picker-message:empty {
+	display: none;
 }
 
 .icon-picker-container ul {
-  margin: 10px 0;
-  width: 100%;
+	display: grid;
+	grid-template-columns: repeat(6, 1fr);
+	gap: 4px;
+	max-height: 252px;
+	margin: 8px 0 0;
+	padding: 0;
+	overflow-y: auto;
+	list-style: none;
+}
+
+.icon-picker-container ul:empty {
+	display: none;
 }
 
 .icon-picker-container ul li {
-  display: inline-block;
-  margin: 5px;
-  float: left;
+	margin: 0;
 }
 
-.icon-picker-container ul li a {
-  box-shadow: none;
+.icon-picker-container ul li[hidden] {
+	display: none;
 }
 
-.icon-picker-container ul li a span {
-  display: block;
-  color: #373737;
-  width: 40px;
-  height: 40px;
-  line-height: 40px;
-  text-align: center;
-  border: 1px solid #dfdfdf;
-  font-size: 20px;
+.icon-picker-container .icon-picker-item {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+	height: 42px;
+	padding: 0;
+	color: var(--heatbox-text, #1e1e1e);
+	background: transparent;
+	border: 1px solid var(--heatbox-box-border, #e2e4e7);
+	border-radius: var(--heatbox-radius-small, 4px);
+	cursor: pointer;
+	transition: border-color 0.2s ease-in-out, background-color 0.2s ease-in-out;
 }
 
-.icon-picker-container ul li a span:hover {
-  border-color: #999;
-  background: #efefef;
+.icon-picker-container .icon-picker-item svg {
+	width: 20px;
+	height: 20px;
 }
 
-/* Search */
-.icon-picker-control {
-  display: flex;
-  flex-wrap: wrap;
-  height: 32px;
-  align-items: center;
-  justify-content: space-around;
-}
-
-.icon-picker-control a {
-  text-decoration: none;
-  text-align: center;
-  width: 10%;
-}
-
-.icon-picker--search-wrapper {
-  width: 70%;
-}
-
-.icon-picker--search-wrapper input {
-  width: 100%;
+.icon-picker-container .icon-picker-item:hover,
+.icon-picker-container .icon-picker-item:focus-visible,
+.icon-picker-container .icon-picker-item.is-current {
+	border-color: var(--heatbox-accent, #3858e9);
+	background-color: var(--heatbox-accent-soft, #f0f6fc);
+	outline: none;
 }
